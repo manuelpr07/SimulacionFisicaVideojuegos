@@ -1,0 +1,7 @@
+﻿  Firework.cpp
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\common\PhysX-3.4\PxShared\include\task\PxTask.h(329,1): warning C5220: "physx::PxLightCpuTask::mRefCount": un miembro de datos no estático con un tipo calificado volátil ya no implica
+           que los constructores de copia/movimiento generados por el compilador y los operadores de asignación de copia o movimiento no sean triviales
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\common\PhysX-3.4\PxShared\include\task\PxTask.h(326): message : vea la declaración de 'physx::PxLightCpuTask::mRefCount'
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\skeleton\Particle.h(37,1): warning C4626: 'Particle': el operador de asignaciones se definió implícitamente como eliminado
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\skeleton\Firework.h(35,1): warning C4626: 'Firework': el operador de asignaciones se definió implícitamente como eliminado
+  game.vcxproj -> C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\bin\game.exe

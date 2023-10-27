@@ -5,8 +5,14 @@
 #include <vector>
 
 #include "core.hpp"
+#include "UniformParticleGenerator.h"
+#include "gaussianParticleGenerator.h"
+#include "FireWork.h"
+
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
+
+#include <vector>
 
 #include <iostream>
 
@@ -30,7 +36,12 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
+std::vector<Particle*> particulas;
+std::list <Firework*> Fireworks;
+Particle* part;
+gaussianParticleGenerator* generator;
 
+FireworksRules fr;
 // Initialize physics engine
 void initPhysics(bool interactive)
 {
@@ -54,7 +65,19 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
-	}
+	
+	//part = new Particle(Vector3{ 0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5);
+	//generator = new gaussianParticleGenerator(Vector3{ 2, 0, 2 }, Vector3{ 5, 5, 5 }, part);
+
+	fr.colour = { 1, 0, 0, 1 };
+	fr.numParticles = 10;
+	fr.vel = { 0,40,0 };
+	fr.damping = 1;
+	fr.lifeTime = 4;
+	fr.level = 0;
+	//delete part;
+	Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
+}
 
 
 // Function to configure what happens in each step of physics
@@ -62,8 +85,23 @@ void initPhysics(bool interactive)
 // t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
+	for (Firework* elem : Fireworks)
+	{
+		elem->integrate(t);			
+	}
+	auto it = Fireworks.begin();
+	while (it != Fireworks.end()) {
+		if ((*it)->getErrase())
+		{
+			delete *it;
+			it = Fireworks.erase(it);
+		}
+		else it++;
+	}
+	//generator->generateParticles(t);
+	//generator->integrate(t);
+	//part->integrate(t);
 	PX_UNUSED(interactive);
-
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 }
@@ -72,6 +110,15 @@ void stepPhysics(bool interactive, double t)
 // Add custom code to the begining of the function
 void cleanupPhysics(bool interactive)
 {
+
+	//delete generator;
+	auto it = particulas.begin();
+	while (it != particulas.end()) {
+		it = particulas.erase(it);
+	}
+
+
+
 	PX_UNUSED(interactive);
 
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
@@ -93,7 +140,13 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key))
 	{
-	//case 'B': break;
+	case 'B': {
+		//PxVec3 direccionDeMira = camera.q.rotate(PxVec3(0, 0, 1));
+		//direccionDeMira.normalize();
+		//direccionDeMira = direccionDeMira * -fuerzaBala;
+		
+
+	}; break;
 	//case ' ':	break;
 	case ' ':
 	{
