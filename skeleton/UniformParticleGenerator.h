@@ -3,10 +3,10 @@
 class UniformParticleGenerator :public ParticleGenerator
 {
 public:
-	UniformParticleGenerator(Vector3 posWidth, Vector3 velWidth, Particle* model);
+	UniformParticleGenerator(Vector3 posWidth, Vector3 velWidth, Particle* model, std::string name);
 	~UniformParticleGenerator();
 
-	void generateParticles(double t);
+	Particle* generateParticles(std::list<Particle*>& particles, double t);
 	std::list <Particle*> listParticles;
 	std::list <Particle*> activeParticles();
 	void deleteParticle(Particle* p);

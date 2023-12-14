@@ -3,10 +3,10 @@
 class gaussianParticleGenerator :public ParticleGenerator
 {
 public:
-	gaussianParticleGenerator(Vector3 posW, Vector3 velW, Particle* model);
+	gaussianParticleGenerator(Vector3 posW, Vector3 velW, Particle* model, std::string name);
 	~gaussianParticleGenerator();
 
-	void generateParticles(double t);
+	Particle* generateParticles(std::list<Particle*>& particles, float t);
 	std::list <Particle*> listParticles;
 	std::list <Particle*> activeParticles();
 	void deleteParticle(Particle* p);

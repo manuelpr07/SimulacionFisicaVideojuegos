@@ -56,7 +56,7 @@ void Firework::explode()
 		std::normal_distribution<double> distributionVZ(newFr.vel.z, 10);
 		newVel.z = distributionVZ(mt);
 		newFr.vel = { newVel.x , newVel.y, newVel.z };
-		listParticles->push_back(new Firework(getPos(), newFr, *listParticles));
+		listParticles->push_back(new Firework(getPos().p, newFr, *listParticles));
 	}
 }
 

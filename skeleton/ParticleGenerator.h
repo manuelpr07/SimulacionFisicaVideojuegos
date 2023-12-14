@@ -6,7 +6,7 @@
 #include "Particle.h"
 #include <list>
 #include <random>
-
+#include "ForceRegistry.h"
 
 using namespace physx;
 
@@ -33,17 +33,19 @@ public:
 		delete _model_particle;
 		_model_particle = p;
 		if (modify_pos_vel) {
-			_origin = p->getPos();
+			_origin = p->getPos().p;
 			_mean_velocity = p->getVel();
 		}
 		_model_particle->setPos({ -1000.0f, -1000.0f, -1000.0f });
 	}
 	inline void setNParticles(int n_p) { _n_particles = n_p; }
 
+	inline std::string getName() const { return _name; }
+
 	virtual void integrate(float f) = 0;
 
 	virtual std::list <Particle*> activeParticles() = 0;
-
+	virtual Particle* generateParticles(std::list<Particle*>& particles, float t) = 0;
 protected:
 	int _n_particles = 3; // Number of particles for each generateParticles call(TODO: add randomness ? ? )
 	double _generation_prob = 1.0; // IF 1.0 --> always produces particles

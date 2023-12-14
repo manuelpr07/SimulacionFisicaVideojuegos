@@ -1,20 +1,18 @@
 #include <ctype.h>
 
 #include <PxPhysicsAPI.h>
-
+#include <iostream>
 #include <vector>
 
 #include "core.hpp"
-#include "UniformParticleGenerator.h"
-#include "gaussianParticleGenerator.h"
-#include "FireWork.h"
-
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 
-#include <vector>
+#include "UniformParticleGenerator.h"
+#include "gaussianParticleGenerator.h"
+//#include "FireWork.h"
+#include "ParticleSystem.h"
 
-#include <iostream>
 
 std::string display_text = "This is a test";
 
@@ -36,10 +34,10 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-std::vector<Particle*> particulas;
-std::list <Firework*> Fireworks;
+//std::vector<Particle*> particulas;
 Particle* part;
-gaussianParticleGenerator* generator;
+ParticleSystem* partSys;
+float springPower = 20.0f;
 
 FireworksRules fr;
 // Initialize physics engine
@@ -66,17 +64,70 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	
-	//part = new Particle(Vector3{ 0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5);
-	//generator = new gaussianParticleGenerator(Vector3{ 2, 0, 2 }, Vector3{ 5, 5, 5 }, part);
+	//sistema de particulas
+	partSys = new ParticleSystem();
 
+	////fuente
+	//part = new Particle(Vector3{0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5, Vector4(0.5, 0, 0.7, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 2, 0, 2 }, Vector3{ 5, 5, 5 }, part, "fuente"));
+	//delete part;
+	
+	//chorro1
+	//part = new Particle(Vector3{ 30,0,10 }, Vector3{ 20,10,0 }, 4, 1, 10, Vector4(1, 0, 0, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro1"));
+	//delete part;
+
+	////chorro2
+	//part = new Particle(Vector3{ 30,0,20 }, Vector3{ 20,10,0 }, 40, 1, 10, Vector4(1, 0.5, 0, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro2"));
+	//delete part;
+
+	////chorro3
+	//part = new Particle(Vector3{ 30,0,30 }, Vector3{ 20,10,0 }, 400, 1, 10, Vector4(1, 1, 0, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro3"));
+	//delete part;
+
+	//lluvia
+	//part = new Particle(Vector3{0,0,0 }, Vector3{ 0,0,0 }, 12, 1, 50, Vector4(0, 0, 0.8, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 25, 0, 25 }, Vector3{ 0, 0, 0 }, part, "lluvia"));
+	//delete part;
+
+	//lluvia pesada
+	//part = new Particle(Vector3{ 0,50,0 }, Vector3{ 0,0,0 }, 100, 1, 10, Vector4(0.8, 0, 0, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 25, 0, 25 }, Vector3{ 0, 0, 0 }, part, "lluvia2"));
+	//delete part;
+
+	//gravedad
+	partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
+
+	//viento
+	//partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 30, 0, 30 }, 5));
+
+	//torbellino
+	//partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 0.8, 5));
+
+	//explosion
+	//ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 50000, 1.0f, 0);
+	//partSys->addForceGenerator(exp);
+	//partSys->addExplosionGenerator(exp);
+
+	//anchoredSpring
+	//SpringForceGenerator* springGen = new SpringForceGenerator("Spring", anchorPoint, springConstant, restLength);
+	//particleSystem->addForceGenerator(springGen);
+	//spring = springGen;
+
+	//firework
 	fr.colour = { 1, 0, 0, 1 };
 	fr.numParticles = 10;
 	fr.vel = { 0,40,0 };
 	fr.damping = 1;
 	fr.lifeTime = 4;
 	fr.level = 0;
-	//delete part;
-	Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
+
+	
+
+	//Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
+	
 }
 
 
@@ -85,22 +136,8 @@ void initPhysics(bool interactive)
 // t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
-	for (Firework* elem : Fireworks)
-	{
-		elem->integrate(t);			
-	}
-	auto it = Fireworks.begin();
-	while (it != Fireworks.end()) {
-		if ((*it)->getErrase())
-		{
-			delete *it;
-			it = Fireworks.erase(it);
-		}
-		else it++;
-	}
-	//generator->generateParticles(t);
-	//generator->integrate(t);
-	//part->integrate(t);
+	partSys->integrate(t);
+
 	PX_UNUSED(interactive);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
@@ -111,20 +148,11 @@ void stepPhysics(bool interactive, double t)
 void cleanupPhysics(bool interactive)
 {
 
-	//delete generator;
-	auto it = particulas.begin();
-	while (it != particulas.end()) {
-		it = particulas.erase(it);
-	}
-
-
+	delete partSys;
 
 	PX_UNUSED(interactive);
-
-	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
 	gScene->release();
 	gDispatcher->release();
-	// -----------------------------------------------------
 	gPhysics->release();	
 	PxPvdTransport* transport = gPvd->getTransport();
 	gPvd->release();
@@ -144,16 +172,38 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		//PxVec3 direccionDeMira = camera.q.rotate(PxVec3(0, 0, 1));
 		//direccionDeMira.normalize();
 		//direccionDeMira = direccionDeMira * -fuerzaBala;
-		
+		partSys->generate(fr);
 
 	}; break;
-	//case ' ':	break;
+	case 'V': {
+		auto a = std::chrono::high_resolution_clock::now();
+		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+		partSys->explosion(actualTime);
+	}; break; 
+	case 'C': {
+		partSys->generateSpringDemo();
+	}; break;
+	case 'X': {
+		partSys->generateAnchoredSpringDemo();
+	}; break;
+	case 'Z': {
+		partSys->generateBuoyancyDemo();
+	}; break;
+	case 'U': {// Aumentar la constante del muelle
+		partSys->changeSpringPower(+5);
+	};	break;
+	case 'Y': {// Disminuir la constante del muelle
+		partSys->changeSpringPower(-5);
+	};	break;
+	case 'I': {// Disminuir la constante del muelle
+		partSys->anchoredSForce(100);
+	};
 	case ' ':
 	{
 		break;
 	}
-	default:
-		break;
+	//default:
+	//	break;
 	}
 }
 

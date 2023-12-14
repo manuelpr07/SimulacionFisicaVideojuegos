@@ -1,10 +1,10 @@
 #include "UniformParticleGenerator.h"
 
-UniformParticleGenerator::UniformParticleGenerator( Vector3 posW, Vector3 velW, Particle* m): ParticleGenerator(m)
+UniformParticleGenerator::UniformParticleGenerator( Vector3 posW, Vector3 velW, Particle* m, std::string name): ParticleGenerator(m)
 {
 	velWidth = velW;
 	posWidth = posW;
-
+	_name = name;
 }
 UniformParticleGenerator::~UniformParticleGenerator()
 {
@@ -14,20 +14,20 @@ UniformParticleGenerator::~UniformParticleGenerator()
 
 }
 
-void UniformParticleGenerator::generateParticles(double t)
+Particle* UniformParticleGenerator::generateParticles(std::list<Particle*>& particles, double t)
 {
 	Vector3 newPos;
 	Vector3 newVel;
 
 	//calculo de la nueva posicion
 	double random_number = _u(_mt);
-	newPos.x = _model_particle->getPos().x + posWidth.x * random_number;
+	newPos.x = _model_particle->getPos().p.x + posWidth.x * random_number;
 
 	random_number = _u(_mt);
-	newPos.y = _model_particle->getPos().y + posWidth.y * random_number;
+	newPos.y = _model_particle->getPos().p.y + posWidth.y * random_number;
 
 	random_number = _u(_mt);
-	newPos.z = _model_particle->getPos().z + posWidth.z * random_number;
+	newPos.z = _model_particle->getPos().p.z + posWidth.z * random_number;
 
 	//calculo de la nueva velocidad
 	random_number = _u(_mt);
@@ -40,17 +40,11 @@ void UniformParticleGenerator::generateParticles(double t)
 	newVel.z = _model_particle->getVel().z + velWidth.z * random_number;
 
 
-	Particle* part = new Particle(newPos, newVel, 12, _model_particle->getDamping(), _model_particle->getLifeTime(), t);
+	Particle* part = new Particle(newPos, newVel, _model_particle->getMass(), _model_particle->getDamping(), _model_particle->getLifeTime(), t, _model_particle->getColor());
 
-	listParticles.push_back(part);
+	particles.push_back(part);
 
-	 
-
-	//(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT)
-
-
-
-		//pose = PxTransform(pos);
+	return part;
 }
 
 std::list<Particle*> UniformParticleGenerator::activeParticles()

@@ -1,20 +1,14 @@
-﻿  callbacks.cpp
-  Firework.cpp
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\core.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: '../common/Common/Print.h': No such file or directory (compilando archivo de origen callbacks.cpp)
-  gaussianParticleGenerator.cpp
-  main.cpp
-  Particle.cpp
-  ParticleGenerator.cpp
-  RenderUtils.cpp
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\main.cpp(3,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory
-  Camera.cpp
-  Render.cpp
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\Render\Camera.h(34,10): fatal  error C1083: No se puede abrir el archivo incluir: 'foundation/PxTransform.h': No such file or directory (compilando archivo de origen Render\Camera.cpp)
-  UniformParticleGenerator.cpp
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen Firework.cpp)
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\Render\Render.h(34,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen Render\Render.cpp)
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen Particle.cpp)
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.cpp(3,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen gaussianParticleGenerator.cpp)
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen ParticleGenerator.cpp)
-C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\RenderUtils.hpp(4,10): fatal  error C1083: No se puede abrir el archivo incluir: 'PxPhysicsAPI.h': No such file or directory (compilando archivo de origen UniformParticleGenerator.cpp)
+﻿  ParticleSystem.cpp
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\common\PhysX-3.4\PxShared\include\task\PxTask.h(329,1): warning C5220: "physx::PxLightCpuTask::mRefCount": un miembro de datos no estático con un tipo calificado volátil ya no implica
+           que los constructores de copia/movimiento generados por el compilador y los operadores de asignación de copia o movimiento no sean triviales
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\common\PhysX-3.4\PxShared\include\task\PxTask.h(326): message : vea la declaración de 'physx::PxLightCpuTask::mRefCount'
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(11,1): warning C5204: "ForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(20,1): warning C5204: "GravityForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(31,1): warning C5204: "WindForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(43,1): warning C5204: "WhirlwindForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(41,92): warning C5038: miembro de datos "WhirlwindForceGenerator::size" se inicializará después de miembro de datos "WhirlwindForceGenerator::k"
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(60,1): warning C5204: "ExplosionForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.h(93,3): warning C4265: "BuoyancyForceGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ParticleGenerator.h(18,3): warning C4265: "ParticleGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
+C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\skeleton\ParticleSystem.cpp(72): warning C4715: 'ParticleSystem::getParticleGenerator': no todas las rutas de acceso de control devuelven un valor
+  game.vcxproj -> C:\Users\manue\OneDrive\Escritorio\Desarrollo de Videojuegos\TERCERO\Fisica\Practica1\SimulacionFisicaVideojuegos\bin\game.exe
