@@ -103,15 +103,15 @@ void initPhysics(bool interactive)
 	//partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
 
 	//viento
-	partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 10, 0, 10 }, 10));
+	//partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 10, 0, 10 }, 10));
 
 	//torbellino
-	partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 5, 10));
+	//partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 5, 10));
 
 	//explosion
-	//ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 50000, 1.0f, 0);
-	//partSys->addForceGenerator(exp);
-	//partSys->addExplosionGenerator(exp);
+	ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 50000, 1.0f, 0);
+	partSys->addForceGenerator(exp);
+	partSys->addExplosionGenerator(exp);
 
 	//anchoredSpring
 	//SpringForceGenerator* springGen = new SpringForceGenerator("Spring", anchorPoint, springConstant, restLength);
