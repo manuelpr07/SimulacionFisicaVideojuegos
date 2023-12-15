@@ -1,7 +1,7 @@
 #include "Particle.h"
 #include <iostream>
 
-Particle::Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, Vector4 col) {
+Particle::Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, Vector4 col) {
 
 	pose = PxTransform(pos);
 	mass = realMass;
@@ -14,7 +14,7 @@ Particle::Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, doubl
 	renderItem = new RenderItem(CreateShape(PxSphereGeometry(1.0)), &pose, col);
 }
 
-Particle::Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, double startT, PxShape* shape, Vector4 col) {
+Particle::Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, double startT, PxShape* shape, Vector4 col) {
 
 	pose = PxTransform(pos);
 	mass = realMass;
@@ -27,7 +27,7 @@ Particle::Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, doubl
 	startTime = startT;
 }
 
-Particle::Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, double startT, Vector4 col) {
+Particle::Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, double startT, Vector4 col) {
 
 	pose = PxTransform(pos);
 	mass = realMass;

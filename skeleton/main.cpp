@@ -10,6 +10,7 @@
 
 #include "UniformParticleGenerator.h"
 #include "gaussianParticleGenerator.h"
+#include "RBGaussianParticleGenerator.h"
 //#include "FireWork.h"
 #include "ParticleSystem.h"
 
@@ -37,6 +38,7 @@ ContactReportCallback gContactReportCallback;
 //std::vector<Particle*> particulas;
 Particle* part;
 ParticleSystem* partSys;
+RBGaussianParticleGenerator* GeneradorRigido;
 float springPower = 20.0f;
 
 FireworksRules fr;
@@ -98,13 +100,13 @@ void initPhysics(bool interactive)
 	//delete part;
 
 	//gravedad
-	partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
+	//partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
 
 	//viento
-	//partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 30, 0, 30 }, 5));
+	partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 10, 0, 10 }, 10));
 
 	//torbellino
-	//partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 0.8, 5));
+	partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 5, 10));
 
 	//explosion
 	//ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 50000, 1.0f, 0);
@@ -123,11 +125,28 @@ void initPhysics(bool interactive)
 	fr.damping = 1;
 	fr.lifeTime = 4;
 	fr.level = 0;
-
-	
-
 	//Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
-	
+
+	//generar el suelo estatico
+	PxRigidStatic* suelo = gPhysics->createRigidStatic(PxTransform({ 0,0,0 }));
+	PxShape* shape = CreateShape(PxBoxGeometry(100, 0.1, 100));
+	suelo->attachShape(*shape);
+	gScene->addActor(*suelo);
+
+	//renderizar el suelo
+	RenderItem* item;
+	item = new RenderItem(shape, suelo, { 0.8, 0.8, 0.8, 1 });
+
+
+	//addRBParticleGenerator
+	//generador rigido dinamico
+	PxShape* shape_ad = CreateShape(PxBoxGeometry(5, 0, 5));
+	RBParticle* rbPart = new RBParticle({ 0, 50, 0 }, { 0, -15, 0 }, {0,0,0}, 1, 5, gPhysics, gScene, shape_ad, { 1, 0, 0, 1 });
+	partSys->addRBParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 5, 5, 5 },50, gPhysics, gScene));
+	delete rbPart;
+	//part = new Particle(Vector3{ 30,0,30 }, Vector3{ 20,10,0 }, 400, 1, 10, Vector4(1, 1, 0, 1));
+	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro3"));
+	//delete part;
 }
 
 
@@ -137,7 +156,6 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	partSys->integrate(t);
-
 	PX_UNUSED(interactive);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
@@ -190,10 +208,10 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		partSys->generateBuoyancyDemo();
 	}; break;
 	case 'U': {// Aumentar la constante del muelle
-		partSys->changeSpringPower(+5);
+		partSys->changeSpringPower(+500);
 	};	break;
 	case 'Y': {// Disminuir la constante del muelle
-		partSys->changeSpringPower(-5);
+		partSys->changeSpringPower(-50);
 	};	break;
 	case 'I': {// Disminuir la constante del muelle
 		partSys->anchoredSForce(100);

@@ -45,7 +45,7 @@ public:
 class ExplosionForceGenerator : public ForceGenerator {
 private:
 	Vector3 center;
-	float radius = 20;
+	float radius = 50;
 	float K;
 	float tau;
 	float startTime;

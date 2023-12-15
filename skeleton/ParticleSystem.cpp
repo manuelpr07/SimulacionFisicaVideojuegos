@@ -24,6 +24,15 @@ void ParticleSystem::generate(FireworksRules fr)
 void ParticleSystem::integrate(float t)
 {
 	createParticles(t);
+
+	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
+		if (RBparticles.size() < 100)
+		{
+			RBParticle* p = pg->generateParticles(RBparticles);
+			registry.addRegistry(p, forceGenerators);
+		}
+	}
+
 	registry.updateForces(t);
 
 	for (Particle* elem : particles)
@@ -40,6 +49,22 @@ void ParticleSystem::integrate(float t)
 		}
 
 		else it++;
+	}
+
+	for (Particle* elemt : RBparticles)
+	{
+		elemt->integrate(t);
+	}
+
+	auto ot = RBparticles.begin();
+	while (ot != RBparticles.end()) {
+		if ((*ot)->getErrase())
+		{
+			delete (*ot);
+			ot = RBparticles.erase(ot);
+		}
+
+		else ot++;
 	}
 
 }
@@ -76,12 +101,29 @@ void ParticleSystem::addParticleGenerator(ParticleGenerator* generator)
 	particleGenerators.push_back(generator);
 }
 
+void ParticleSystem::addRBParticleGenerator(RBGaussianParticleGenerator* generator)
+{
+
+	RBparticleGenerators.push_back(generator);
+}
+
 void ParticleSystem::createParticles(double t)
 {
 
 	for (ParticleGenerator* pg : particleGenerators) {
 		Particle* p = pg->generateParticles(particles,t);
 		registry.addRegistry(p, forceGenerators);
+	}
+}
+void ParticleSystem::createRBParticles(double t)
+{
+
+	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
+		RBParticle* p = pg->generateParticles(RBparticles);
+		if (p != nullptr)
+		{
+			registry.addRegistry(p, forceGenerators);
+		}
 	}
 }
 
@@ -125,11 +167,11 @@ void ParticleSystem::generateAnchoredSpringDemo() {
 void ParticleSystem::generateBuoyancyDemo() {
 	auto a = std::chrono::high_resolution_clock::now();
 	float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
-	Particle* p1 = new Particle(Vector3{ 0,50,0 }, Vector3{ 0,0,0 }, 1, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p2 = new Particle(Vector3{ 5,50,5 }, Vector3{ 0,0,0 }, 10, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p3 = new Particle(Vector3{ 5,50,-5 }, Vector3{ 0,0,0 }, 30, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p4 = new Particle(Vector3{ -5,50,5 }, Vector3{ 0,0,0 }, 60, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p5 = new Particle(Vector3{ -5,50,-5 }, Vector3{ 0,0,0 }, 200, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+	Particle* p1 = new Particle(Vector3{ 0,50,0 }, Vector3{ 0,0,0 }, 10, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+	Particle* p2 = new Particle(Vector3{ 5,50,5 }, Vector3{ 0,0,0 }, 100, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+	Particle* p3 = new Particle(Vector3{ 5,50,-5 }, Vector3{ 0,0,0 }, 300, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+	Particle* p4 = new Particle(Vector3{ -5,50,5 }, Vector3{ 0,0,0 }, 1000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+	Particle* p5 = new Particle(Vector3{ -5,50,-5 }, Vector3{ 0,0,0 }, 2000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
 	BuoyancyForceGenerator* f4 = new BuoyancyForceGenerator(1000, Vector3(0, 20, 0));
 	forceGenerators.push_back(f4);
 	registry.addRegistry(p1, f4);

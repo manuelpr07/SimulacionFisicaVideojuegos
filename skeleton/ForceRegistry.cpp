@@ -5,6 +5,11 @@ void ForceRegistry::updateForces(float duration)
 	for (auto it = registry.begin(); it != registry.end(); it++) {
 		it->second->updateForce(it->first, duration);
 	}
+
+	////rigidBody 
+	//for (auto ot = RBregistry.begin(); ot != RBregistry.end(); ot++) {
+	//	ot->second->updateForce(ot->first, duration);
+	//}
 }
 
 void ForceRegistry::addRegistry(Particle* p, ForceGenerator* fg)

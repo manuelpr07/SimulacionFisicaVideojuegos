@@ -11,9 +11,9 @@ using namespace std;
 class Particle
 {
 public:
-	Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, Vector4 col);
-	Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, double startT, PxShape* shape, Vector4 col);
-	Particle(Vector3 pos, Vector3 realVel, int realMass, float damp, double lifeT, double startT, Vector4 col);
+	Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, Vector4 col);
+	Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, double startT, PxShape* shape, Vector4 col);
+	Particle(Vector3 pos, Vector3 realVel, float realMass, float damp, double lifeT, double startT, Vector4 col);
 	Particle(Vector3 pos, Vector3 realVel, Vector4 color, float damp, double lifeT);
 	~Particle();
 
@@ -38,7 +38,7 @@ public:
 
 	double getStartTime() { return startTime; };
 
-	void integrate(float t);
+	virtual void integrate(float t);
 
 	void setErrase() { errase = true; };
 	bool getErrase() { return errase; };
@@ -48,14 +48,14 @@ public:
 	Vector4 getColor() { return color; ; }
 
 	void clearForce() { force *= 0.0f; };
-	void addForce(const Vector3& f) {
+	virtual void addForce(const Vector3& f) {
 		force += f;
 	};
 
 	bool getStatic() { return estatico; };
 	void setStatic(bool s) { estatico = s; };
 	
-private:
+protected:
 	Vector3 vel;
 	Vector3 acc;
 	Vector3 force;
