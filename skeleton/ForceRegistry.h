@@ -18,5 +18,5 @@ public:
 	inline void deleteParticle(Particle* p);
 
 	void deleteRegistry(const ForceGenerator* const fg);
-
+	void clearRegistry();
 };

@@ -96,6 +96,10 @@ AnchoredSpringForceGenerator::~AnchoredSpringForceGenerator()
 {
 	delete other;
 }	
+void AnchoredSpringForceGenerator::clear()
+{
+	delete other;
+}
 
 BuoyancyForceGenerator::BuoyancyForceGenerator(float d, Vector3 pos)
 {
@@ -124,4 +128,9 @@ void BuoyancyForceGenerator::updateForce(Particle* particle, float t) {
 	f.y = liquidDensity * volume * immersed * gravity;
 
 	particle->addForce(f);
+}
+
+void BuoyancyForceGenerator::clear()
+{
+	delete liquidParticle;
 }

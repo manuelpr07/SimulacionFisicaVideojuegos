@@ -54,3 +54,9 @@ void ForceRegistry::deleteRegistry(const ForceGenerator* const fg)
 		else ++it;
 	}
 }
+void ForceRegistry::clearRegistry()
+{
+	for (auto it = registry.begin(); it != registry.end();) {
+		it = registry.erase(it);
+	}
+}

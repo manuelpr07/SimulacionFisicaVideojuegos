@@ -32,6 +32,8 @@ public:
 	void generateBuoyancyDemo();
 	void changeSpringPower(int k);
 	void anchoredSForce(float f);
+	void createRB();
+	void clearScene();
 
 protected:
 	std::list<Particle*> particles;
@@ -44,9 +46,11 @@ protected:
 	ExplosionForceGenerator* expGenerator = nullptr;
 	BungeeForceGenerator* gen1 = nullptr;
 	BungeeForceGenerator* gen2 = nullptr;
-	GravityForceGenerator* gravity;
-	WindForceGenerator* wind;
-	WhirlwindForceGenerator* whirlWind;
+	GravityForceGenerator* gravity = nullptr;
+	WindForceGenerator* wind = nullptr;
+	WhirlwindForceGenerator* whirlWind = nullptr;
+	BuoyancyForceGenerator* buoyancy = nullptr;
+	AnchoredSpringForceGenerator* anchored = nullptr;
 	Particle* AnchoredP = nullptr;
 };
 

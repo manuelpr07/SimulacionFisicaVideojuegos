@@ -7,11 +7,8 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem()
 {
-	auto it = Fireworks.begin();
-	while (it != Fireworks.end()) {
-		delete (*it);
-		it = Fireworks.erase(it);
-	}
+	clearScene();
+
 }
 
 void ParticleSystem::generate(FireworksRules fr)
@@ -25,13 +22,7 @@ void ParticleSystem::integrate(float t)
 {
 	createParticles(t);
 
-	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
-		if (RBparticles.size() < 100)
-		{
-			RBParticle* p = pg->generateParticles(RBparticles);
-			registry.addRegistry(p, forceGenerators);
-		}
-	}
+
 
 	registry.updateForces(t);
 
@@ -49,6 +40,21 @@ void ParticleSystem::integrate(float t)
 		}
 
 		else it++;
+	}
+
+	for (Firework* elem : Fireworks)
+	{
+		elem->integrate(t);
+	}
+	auto it1 = Fireworks.begin();
+	while (it1 != Fireworks.end()) {
+		if ((*it1)->getErrase())
+		{
+			delete (*it1);
+			it1 = Fireworks.erase(it1);
+		}
+
+		else it1++;
 	}
 
 	for (Particle* elemt : RBparticles)
@@ -153,42 +159,47 @@ void ParticleSystem::generateSpringDemo() {
 	particles.push_back(p2);
 }
 void ParticleSystem::generateAnchoredSpringDemo() {
-
-	auto a = std::chrono::high_resolution_clock::now();
-	float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
-	AnchoredP = new Particle(Vector3{ 0,0,0 }, Vector3{ 0,0,0 }, 12, 1, 500, startTime, CreateShape(PxSphereGeometry(5.0)), Vector4(0, 1, 0, 1));
-	AnchoredP->setSize(5);
-	AnchoredSpringForceGenerator* f3 = new AnchoredSpringForceGenerator(1, 10, { 0,0,0 });
-	registry.addRegistry(AnchoredP, f3);
-	registry.addRegistry(AnchoredP, gravity);
-	forceGenerators.push_back(f3);
-	particles.push_back(AnchoredP);
+	if (anchored == nullptr)
+	{
+		auto a = std::chrono::high_resolution_clock::now();
+		float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+		AnchoredP = new Particle(Vector3{ 0,0,0 }, Vector3{ 0,0,0 }, 12, 1, 500, startTime, CreateShape(PxSphereGeometry(5.0)), Vector4(0, 1, 0, 1));
+		AnchoredP->setSize(5);
+		anchored = new AnchoredSpringForceGenerator(1, 10, { 0,0,0 });
+		registry.addRegistry(AnchoredP, anchored);
+		registry.addRegistry(AnchoredP, gravity);
+		forceGenerators.push_back(anchored);
+		particles.push_back(AnchoredP);
+	}
 }
 void ParticleSystem::generateBuoyancyDemo() {
-	auto a = std::chrono::high_resolution_clock::now();
-	float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
-	Particle* p1 = new Particle(Vector3{ 0,50,0 }, Vector3{ 0,0,0 }, 10, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p2 = new Particle(Vector3{ 5,50,5 }, Vector3{ 0,0,0 }, 100, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p3 = new Particle(Vector3{ 5,50,-5 }, Vector3{ 0,0,0 }, 300, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p4 = new Particle(Vector3{ -5,50,5 }, Vector3{ 0,0,0 }, 1000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	Particle* p5 = new Particle(Vector3{ -5,50,-5 }, Vector3{ 0,0,0 }, 2000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
-	BuoyancyForceGenerator* f4 = new BuoyancyForceGenerator(1000, Vector3(0, 20, 0));
-	forceGenerators.push_back(f4);
-	registry.addRegistry(p1, f4);
-	registry.addRegistry(p2, f4);
-	registry.addRegistry(p3, f4);
-	registry.addRegistry(p4, f4);
-	registry.addRegistry(p5, f4);
-	registry.addRegistry(p1, gravity);
-	registry.addRegistry(p2, gravity);
-	registry.addRegistry(p3, gravity);
-	registry.addRegistry(p4, gravity);
-	registry.addRegistry(p5, gravity);
-	particles.push_back(p1);
-	particles.push_back(p2);
-	particles.push_back(p3);
-	particles.push_back(p4);
-	particles.push_back(p5);
+	if (buoyancy == nullptr)
+	{
+		auto a = std::chrono::high_resolution_clock::now();
+		float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+		Particle* p1 = new Particle(Vector3{ 0,50,0 }, Vector3{ 0,0,0 }, 10, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+		Particle* p2 = new Particle(Vector3{ 5,50,5 }, Vector3{ 0,0,0 }, 100, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+		Particle* p3 = new Particle(Vector3{ 5,50,-5 }, Vector3{ 0,0,0 }, 300, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+		Particle* p4 = new Particle(Vector3{ -5,50,5 }, Vector3{ 0,0,0 }, 1000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+		Particle* p5 = new Particle(Vector3{ -5,50,-5 }, Vector3{ 0,0,0 }, 2000, 0.8, 500, startTime, Vector4(0, 1, 0, 1));
+		buoyancy = new BuoyancyForceGenerator(1000, Vector3(0, 20, 0));
+		forceGenerators.push_back(buoyancy);
+		registry.addRegistry(p1, buoyancy);
+		registry.addRegistry(p2, buoyancy);
+		registry.addRegistry(p3, buoyancy);
+		registry.addRegistry(p4, buoyancy);
+		registry.addRegistry(p5, buoyancy);
+		registry.addRegistry(p1, gravity);
+		registry.addRegistry(p2, gravity);
+		registry.addRegistry(p3, gravity);
+		registry.addRegistry(p4, gravity);
+		registry.addRegistry(p5, gravity);
+		particles.push_back(p1);
+		particles.push_back(p2);
+		particles.push_back(p3);
+		particles.push_back(p4);
+		particles.push_back(p5);
+	}
 }
 
 void ParticleSystem::changeSpringPower(int k)
@@ -207,6 +218,72 @@ void ParticleSystem::changeSpringPower(int k)
 void ParticleSystem::anchoredSForce(float f)
 {
 	AnchoredP->addForce({0, f, 0});
+}
+
+void ParticleSystem::createRB()
+{
+	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
+		while (RBparticles.size() < 100) {
+
+			RBParticle* p = pg->generateParticles(RBparticles);
+			registry.addRegistry(p, forceGenerators);
+		}
+	}
+}
+
+void ParticleSystem::clearScene()
+{
+
+	registry.clearRegistry();
+
+	if (!Fireworks.empty()) {
+		auto it = Fireworks.begin();
+		while (it != Fireworks.end()) {
+			(*it)->setErrase();
+			it++;
+		}
+	}
+	if (!particles.empty()) {
+		auto it1 = particles.begin();
+		while (it1 != particles.end()) {
+			(*it1)->setErrase();
+			it1++;
+		}
+	}
+	if (!RBparticles.empty()) {
+		auto it2 = RBparticles.begin();
+		while (it2 != RBparticles.end()) {
+			(*it2)->setErrase();
+			it2++;
+		}
+	}
+	if (gen1 != nullptr)
+	{
+		gen1 = nullptr;
+	}
+	if (gen2 != nullptr)
+	{
+		gen2 = nullptr;
+	}
+	if (anchored != nullptr)
+	{
+		anchored->clear();
+		anchored = nullptr;
+	}
+	if (wind != nullptr)
+	{
+		wind = nullptr;
+	}
+	if (whirlWind != nullptr)
+	{
+		whirlWind = nullptr;
+	}
+	if (buoyancy != nullptr)
+	{
+		buoyancy->clear();
+		buoyancy = nullptr;
+	}
+
 }
 
 

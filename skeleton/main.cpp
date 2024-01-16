@@ -100,7 +100,7 @@ void initPhysics(bool interactive)
 	//delete part;
 
 	//gravedad
-	//partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
+	partSys->addGravityForceGenerator(new GravityForceGenerator(Vector3(0, -9.81f, 0)));
 
 	//viento
 	//partSys->addWindForceGenerator(new WindForceGenerator(Vector3{ 10, 0, 10 }, 10));
@@ -109,7 +109,7 @@ void initPhysics(bool interactive)
 	//partSys->addWhirlwindForceGenerator(new WhirlwindForceGenerator(10, Vector3{ 0, 0, 0 }, 5, 10));
 
 	//explosion
-	ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 50000, 1.0f, 0);
+	ExplosionForceGenerator* exp = new ExplosionForceGenerator(Vector3(0, 0, 0), 100000, 0.1f, 0);
 	partSys->addForceGenerator(exp);
 	partSys->addExplosionGenerator(exp);
 
@@ -140,13 +140,21 @@ void initPhysics(bool interactive)
 
 	//addRBParticleGenerator
 	//generador rigido dinamico
-	PxShape* shape_ad = CreateShape(PxBoxGeometry(5, 0, 5));
-	RBParticle* rbPart = new RBParticle({ 0, 50, 0 }, { 0, -15, 0 }, {0,0,0}, 1, 5, gPhysics, gScene, shape_ad, { 1, 0, 0, 1 });
+	RBParticle* rbPart = new RBParticle({ 0, 50, 0 }, { 0, -15, 0 }, {0,0,0}, 1, 5, gPhysics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), { 1, 0, 0, 1 });
 	partSys->addRBParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 5, 5, 5 },50, gPhysics, gScene));
+	//rbPart->setErrase();
 	delete rbPart;
+
+
 	//part = new Particle(Vector3{ 30,0,30 }, Vector3{ 20,10,0 }, 400, 1, 10, Vector4(1, 1, 0, 1));
 	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro3"));
 	//delete part;
+
+	//PxMaterial* material = gPhysics->createMaterial(0.5f, 0.5f, 0.1f);
+	//PxTransform buttonTransform(PxVec3(0.0f, 10.0f, 0.0f)); // Posición inicial del botón
+	//PxBoxGeometry buttonGeometry(PxVec3(10.0f, 10.0f, 10.0f)); // Dimensiones del botón
+	//PxRigidStatic* buttonActor = PxCreateStatic(*gPhysics, buttonTransform, buttonGeometry, *material);
+	//gScene->addActor(*buttonActor);
 }
 
 
@@ -187,9 +195,6 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	switch(toupper(key))
 	{
 	case 'B': {
-		//PxVec3 direccionDeMira = camera.q.rotate(PxVec3(0, 0, 1));
-		//direccionDeMira.normalize();
-		//direccionDeMira = direccionDeMira * -fuerzaBala;
 		partSys->generate(fr);
 
 	}; break;
@@ -216,6 +221,12 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'I': {// Disminuir la constante del muelle
 		partSys->anchoredSForce(100);
 	};
+	case 'P': {// Disminuir la constante del muelle
+		partSys->clearScene();
+	}; break;
+	case 'G': {// Disminuir la constante del muelle
+		partSys->createRB();
+	}; break;
 	case ' ':
 	{
 		break;

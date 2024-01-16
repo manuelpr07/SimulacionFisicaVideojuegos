@@ -47,6 +47,7 @@ Particle::Particle(Vector3 pos, Vector3 realVel, Vector4 color, float damp, doub
 	damping = damp;
 	vel = realVel;
 	lifeTime = lifeT;
+	mass = 1;
 	size = 1;
 	force = { 0,0,0 };
 	renderItem = new RenderItem(CreateShape(PxSphereGeometry(1.0)), &pose, color);

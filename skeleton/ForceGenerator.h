@@ -84,6 +84,7 @@ class AnchoredSpringForceGenerator : public SpringForceGenerator {
 public:
 	AnchoredSpringForceGenerator(double k, double resting, const Vector3& anchor_pos);
 	~AnchoredSpringForceGenerator();
+	void clear();
 };
 class BuoyancyForceGenerator : public ForceGenerator
 {
@@ -91,6 +92,7 @@ public:
 	BuoyancyForceGenerator(float d, Vector3 pos);
 	void updateForce(Particle* particle, float t);
 	~BuoyancyForceGenerator() {};
+	void clear();
 protected:
 	float liquidDensity;
 	float gravity = 9.8;

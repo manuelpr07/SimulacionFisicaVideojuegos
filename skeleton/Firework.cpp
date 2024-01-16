@@ -17,6 +17,7 @@ Firework::~Firework()
 void Firework::integrate(float t)
 {
 	Particle::integrate(t);
+
 }
 
 void Firework::explode()
