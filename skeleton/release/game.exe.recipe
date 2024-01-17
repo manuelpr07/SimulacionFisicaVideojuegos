@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>U:\hlocal\manuFisica\bin\game.exe</FullPath>
+      <FullPath>C:\hlocal\manuFisica\bin\game.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

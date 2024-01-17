@@ -15,6 +15,9 @@ RBParticle::RBParticle(Vector3 pos, Vector3 linearVel, Vector3 angularVel, float
 
 	renderItem->release();
 	renderItem = new RenderItem(shape, rd, col);
+
+	auto a = std::chrono::high_resolution_clock::now();
+	startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 }
 
 
@@ -36,7 +39,7 @@ void RBParticle::integrate(float t)
 	double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
 	if (actualTime > startTime + getLifeTime()) {
-		//errase = true;
+		errase = true;
 	}
 
 

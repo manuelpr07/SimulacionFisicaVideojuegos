@@ -11,7 +11,7 @@
 #include "UniformParticleGenerator.h"
 #include "gaussianParticleGenerator.h"
 #include "RBGaussianParticleGenerator.h"
-//#include "FireWork.h"
+#include "RBUniformParticleGenerator.h"
 #include "ParticleSystem.h"
 
 
@@ -67,7 +67,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 	
 	//sistema de particulas
-	partSys = new ParticleSystem();
+	partSys = new ParticleSystem(gPhysics, gScene);
 
 	////fuente
 	//part = new Particle(Vector3{0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5, Vector4(0.5, 0, 0.7, 1));
@@ -141,10 +141,11 @@ void initPhysics(bool interactive)
 	//addRBParticleGenerator
 	//generador rigido dinamico
 	RBParticle* rbPart = new RBParticle({ 0, 50, 0 }, { 0, -15, 0 }, {0,0,0}, 1, 5, gPhysics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), { 1, 0, 0, 1 });
-	partSys->addRBParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 5, 5, 5 },50, gPhysics, gScene));
+	partSys->addRBGausianParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 5, 5, 5 },50, gPhysics, gScene));
 	//rbPart->setErrase();
 	delete rbPart;
 
+	
 
 	//part = new Particle(Vector3{ 30,0,30 }, Vector3{ 20,10,0 }, 400, 1, 10, Vector4(1, 1, 0, 1));
 	//partSys->addParticleGenerator(new gaussianParticleGenerator(Vector3{ 1, 1, 1 }, Vector3{ 1, 1, 1 }, part, "chorro3"));
@@ -155,6 +156,7 @@ void initPhysics(bool interactive)
 	//PxBoxGeometry buttonGeometry(PxVec3(10.0f, 10.0f, 10.0f)); // Dimensiones del botón
 	//PxRigidStatic* buttonActor = PxCreateStatic(*gPhysics, buttonTransform, buttonGeometry, *material);
 	//gScene->addActor(*buttonActor);
+
 }
 
 
@@ -195,8 +197,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	switch(toupper(key))
 	{
 	case 'B': {
-		partSys->generate(fr);
-
+		//partSys->generate(fr);
+		partSys->shootProjectile(camera);
 	}; break;
 	case 'V': {
 		auto a = std::chrono::high_resolution_clock::now();
@@ -235,6 +237,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	//	break;
 	}
 }
+
+
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {

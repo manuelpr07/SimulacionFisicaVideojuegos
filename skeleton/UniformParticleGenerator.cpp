@@ -1,10 +1,8 @@
 #include "UniformParticleGenerator.h"
 
-UniformParticleGenerator::UniformParticleGenerator( Vector3 posW, Vector3 velW, Particle* m, std::string name): ParticleGenerator(m)
+UniformParticleGenerator::UniformParticleGenerator(Vector3 velW, Particle* m): ParticleGenerator(m)
 {
 	velWidth = velW;
-	posWidth = posW;
-	_name = name;
 }
 UniformParticleGenerator::~UniformParticleGenerator()
 {
@@ -14,33 +12,19 @@ UniformParticleGenerator::~UniformParticleGenerator()
 
 }
 
-Particle* UniformParticleGenerator::generateParticles(std::list<Particle*>& particles, double t)
+Particle* UniformParticleGenerator::generateParticles(std::list<Particle*>& particles, float t)
 {
-	Vector3 newPos;
-	Vector3 newVel;
+	return nullptr;
+}
 
-	//calculo de la nueva posicion
-	double random_number = _u(_mt);
-	newPos.x = _model_particle->getPos().p.x + posWidth.x * random_number;
+Particle* UniformParticleGenerator::generate(std::list<Particle*>& particles, Vector3 pos, Vector3 v, int mass)
+{
 
-	random_number = _u(_mt);
-	newPos.y = _model_particle->getPos().p.y + posWidth.y * random_number;
+	PxShape* shape = CreateShape(PxBoxGeometry(0.1, 0.1, 0.1));
+	auto a = std::chrono::high_resolution_clock::now();
+	double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
-	random_number = _u(_mt);
-	newPos.z = _model_particle->getPos().p.z + posWidth.z * random_number;
-
-	//calculo de la nueva velocidad
-	random_number = _u(_mt);
-	newVel.x = _model_particle->getVel().x + velWidth.x * random_number;
-
-	random_number = _u(_mt);
-	newVel.y = _model_particle->getVel().y + velWidth.y * random_number;
-	
-	random_number = _u(_mt);
-	newVel.z = _model_particle->getVel().z + velWidth.z * random_number;
-
-
-	Particle* part = new Particle(newPos, newVel, _model_particle->getMass(), _model_particle->getDamping(), _model_particle->getLifeTime(), t, _model_particle->getColor());
+	Particle* part = new Particle(pos, v, mass, 0.99, 4, actualTime, shape, _model_particle->getColor());
 
 	particles.push_back(part);
 

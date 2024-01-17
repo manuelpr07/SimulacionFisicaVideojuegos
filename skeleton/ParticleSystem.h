@@ -3,13 +3,16 @@
 #include"Firework.h"
 #include "ParticleGenerator.h"
 #include "RBGaussianParticleGenerator.h"
+#include "RBUniformParticleGenerator.h"
 #include "ForceGenerator.h"
 #include "ForceRegistry.h"
+#include "boton.h"
+#include "UniformParticleGenerator.h"
 
 class ParticleSystem
 {
 public:
-	ParticleSystem();
+	ParticleSystem(PxPhysics* phys, PxScene* scene);
 	~ParticleSystem();
 	void generate(FireworksRules fr);
 	void integrate(float t);
@@ -21,7 +24,8 @@ public:
 
 	ParticleGenerator* getParticleGenerator(std::string name);
 	void addParticleGenerator(ParticleGenerator* generator);
-	void addRBParticleGenerator(RBGaussianParticleGenerator* generator);
+	void addRBGausianParticleGenerator(RBGaussianParticleGenerator* generator);
+	void addRBUniformParticleGenerator(RBGaussianParticleGenerator* generator);
 	void addExplosionGenerator(ExplosionForceGenerator* generator);
 	void createParticles(double t);
 	void createRBParticles(double t);
@@ -34,14 +38,19 @@ public:
 	void anchoredSForce(float f);
 	void createRB();
 	void clearScene();
-
+	void shootProjectile(const PxTransform& camera);
+	void changeScene();
+	void scene1();
 protected:
+	const Vector3 tamanoCaja = {200,200,200};
 	std::list<Particle*> particles;
+	std::list<Particle*> shootingParticles;
 	std::list<RBParticle*> RBparticles;
 	std::list <Firework*> Fireworks;
 	std::vector<ForceGenerator*> forceGenerators;  // Lista de fuerzas
 	std::list<ParticleGenerator*> particleGenerators;
 	std::list<RBGaussianParticleGenerator*> RBparticleGenerators;
+	UniformParticleGenerator* uniformGenerator;
 	ForceRegistry registry;
 	ExplosionForceGenerator* expGenerator = nullptr;
 	BungeeForceGenerator* gen1 = nullptr;
@@ -52,5 +61,11 @@ protected:
 	BuoyancyForceGenerator* buoyancy = nullptr;
 	AnchoredSpringForceGenerator* anchored = nullptr;
 	Particle* AnchoredP = nullptr;
+	Boton* boton = nullptr;
+
+	PxPhysics* gPhysics;
+	PxScene* gScene;
+
+	int scene;
 };
 

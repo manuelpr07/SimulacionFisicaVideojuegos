@@ -1,8 +1,19 @@
 ﻿#include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(PxPhysics* phys, PxScene* scene)
 {
+	gPhysics = phys;
+	gScene = scene;
 
+
+	boton = new Boton({ 0,10,0 }, { 0.7, 0, 0, 1 });
+
+	//generador rigido uniforme (disparo de la camara)new Particle(pos, v, mass, 0.99, 4, actualTime, shape, _model_particle->getColor());
+	Particle* part = new Particle({ 1000, 50, 1000 }, { 0, -15, 0 }, 5, 0.99, 5, 0, CreateShape(PxBoxGeometry(1, 1, 1)), { 0.4, 0.1, 0.6, 1 });
+	uniformGenerator = new UniformParticleGenerator(Vector3{ 5, 5, 5 }, part); ///cambiar el UniformParticleGenerator para que funcione
+	delete part;
+
+	scene = 0;
 }
 
 ParticleSystem::~ParticleSystem()
@@ -33,13 +44,36 @@ void ParticleSystem::integrate(float t)
 
 	auto it = particles.begin();
 	while (it != particles.end()) {
+		if ((std::abs((*it)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*it)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*it)->getPos().p.z) > tamanoCaja.z / 2))
+			(*it)->setErrase();
 		if ((*it)->getErrase())
 		{
+			registry.registry.erase(*it);
 			delete (*it);
 			it = particles.erase(it);
 		}
 
 		else it++;
+	}
+
+	for (Particle* elem : shootingParticles)
+	{
+		elem->integrate(t);
+		boton->DetectarColision(elem);
+	}
+
+	auto ut = shootingParticles.begin();
+	while (ut != shootingParticles.end()) {
+		if ((std::abs((*ut)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ut)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ut)->getPos().p.z) > tamanoCaja.z / 2))
+			(*ut)->setErrase();
+		if ((*ut)->getErrase())
+		{
+			registry.registry.erase(*ut);
+			delete (*ut);
+			ut = shootingParticles.erase(ut);
+		}
+
+		else ut++;
 	}
 
 	for (Firework* elem : Fireworks)
@@ -50,6 +84,7 @@ void ParticleSystem::integrate(float t)
 	while (it1 != Fireworks.end()) {
 		if ((*it1)->getErrase())
 		{
+			registry.registry.erase(*it1);
 			delete (*it1);
 			it1 = Fireworks.erase(it1);
 		}
@@ -64,8 +99,11 @@ void ParticleSystem::integrate(float t)
 
 	auto ot = RBparticles.begin();
 	while (ot != RBparticles.end()) {
+		if ((std::abs((*ot)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ot)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ot)->getPos().p.z) > tamanoCaja.z / 2))
+			(*ot)->setErrase();
 		if ((*ot)->getErrase())
 		{
+			registry.registry.erase(*ot);
 			delete (*ot);
 			ot = RBparticles.erase(ot);
 		}
@@ -73,6 +111,7 @@ void ParticleSystem::integrate(float t)
 		else ot++;
 	}
 
+	boton->integrate(t);
 }
 
 void ParticleSystem::addForceGenerator(ForceGenerator* forceGenerator)
@@ -107,12 +146,11 @@ void ParticleSystem::addParticleGenerator(ParticleGenerator* generator)
 	particleGenerators.push_back(generator);
 }
 
-void ParticleSystem::addRBParticleGenerator(RBGaussianParticleGenerator* generator)
+void ParticleSystem::addRBGausianParticleGenerator(RBGaussianParticleGenerator* generator)
 {
 
 	RBparticleGenerators.push_back(generator);
 }
-
 void ParticleSystem::createParticles(double t)
 {
 
@@ -246,6 +284,7 @@ void ParticleSystem::clearScene()
 	if (!particles.empty()) {
 		auto it1 = particles.begin();
 		while (it1 != particles.end()) {
+			registry.registry.erase(*it1);
 			(*it1)->setErrase();
 			it1++;
 		}
@@ -253,8 +292,17 @@ void ParticleSystem::clearScene()
 	if (!RBparticles.empty()) {
 		auto it2 = RBparticles.begin();
 		while (it2 != RBparticles.end()) {
+			registry.registry.erase(*it2);
 			(*it2)->setErrase();
 			it2++;
+		}
+	}
+	if (!shootingParticles.empty()) {
+		auto it3 = shootingParticles.begin();
+		while (it3 != shootingParticles.end()) {
+			registry.registry.erase(*it3);
+			(*it3)->setErrase();
+			it3++;
 		}
 	}
 	if (gen1 != nullptr)
@@ -285,5 +333,44 @@ void ParticleSystem::clearScene()
 	}
 
 }
+
+
+void ParticleSystem::shootProjectile(const PxTransform& camera)
+{
+	Vector3 pos = Vector3(camera.p.x, camera.p.y, camera.p.z);
+	PxVec3 direction = camera.q.getBasisVector2() * -1;
+
+	float speed = 100.0f;;
+	Vector3 v = Vector3(direction.x * speed, direction.y * speed, direction.z * speed);;
+	double mass = 30;
+
+
+	Vector3 acceleration = Vector3(0, -9.81, 0);
+
+	Particle* p = uniformGenerator->generate(shootingParticles, pos, v, mass);
+
+	registry.addRegistry(p, gravity);
+}
+
+void ParticleSystem::changeScene()
+{
+	if (scene < 100)
+	{
+		clearScene();
+		scene++;
+
+		switch (scene)
+		{
+			case '1': {
+
+			}; break;
+			case '2': {
+
+			}; break;
+		}
+
+	}
+}
+
 
 

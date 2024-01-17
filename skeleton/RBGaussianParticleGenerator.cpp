@@ -55,7 +55,7 @@ RBParticle* RBGaussianParticleGenerator::generateParticles(std::list<RBParticle*
 		auto a = std::chrono::high_resolution_clock::now();
 		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
-		RBParticle* part = new RBParticle(newPos, newVel, { 0, 0, 0 }, modelParticle->getMass(), actualTime, physics, gScene, shape, modelParticle->getColor());
+		RBParticle* part = new RBParticle(newPos, newVel, { 0, 0, 0 }, modelParticle->getMass(), 5, physics, gScene, shape, modelParticle->getColor());
 		//new_solid = physics->createRigidDynamic(PxTransform(newPos));
 		//new_solid->setLinearVelocity(newVel);
 		//new_solid->setAngularVelocity({ 0, 0, 0 });
