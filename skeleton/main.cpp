@@ -188,32 +188,6 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		//partSys->generate(fr);
 		partSys->shootProjectile(camera);
 	}; break;
-	case 'V': {
-		auto a = std::chrono::high_resolution_clock::now();
-		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
-		partSys->explosion(actualTime);
-	}; break; 
-	case 'C': {
-		partSys->generateSpringDemo();
-	}; break;
-	case 'X': {
-		partSys->generateAnchoredSpringDemo();
-	}; break;
-	case 'Z': {
-		partSys->createRB();
-	}; break;
-	case 'U': {// Aumentar la constante del muelle
-		partSys->changeSpringPower(+500);
-	};	break;
-	case 'Y': {// Disminuir la constante del muelle
-		partSys->changeSpringPower(-50);
-	};	break;
-	case 'I': {// Disminuir la constante del muelle
-		partSys->anchoredSForce(100);
-	};
-	case 'P': {// Disminuir la constante del muelle
-		partSys->clearScene();
-	}; break;
 	case 'G': {// Disminuir la constante del muelle
 		partSys->changeScene();
 	}; break;
