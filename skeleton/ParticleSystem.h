@@ -28,7 +28,7 @@ public:
 	void addRBGausianParticleGenerator(RBGaussianParticleGenerator* generator);
 	void addExplosionGenerator(ExplosionForceGenerator* generator);
 	void createParticles(double t);
-	void createRBParticles(double t);
+	void createRBParticles();
 	//void generateExplosion(Vector3 pos, double size);
 	void explosion(float t);
 	void generateSpringDemo();

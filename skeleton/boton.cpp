@@ -1,7 +1,7 @@
 #include "Boton.h"
 #include <iostream>
 
-Boton::Boton(Vector3 pos, Vector4 col): Particle(pos, Vector3{ 0,0,0 }, 0, 1, 1, 0, CreateShape(PxBoxGeometry(1.5f, 0.8f, 1.5f)), col){
+Boton::Boton(Vector3 pos, Vector4 col): Particle(pos, Vector3{ 0,0,0 }, 0, 1, 1, 0, CreateShape(PxBoxGeometry(2.0f, 2.0f, 2.0f)), col){
     // Puedes personalizar la inicialización del botón aquí si es necesario
     activado = false;
 }

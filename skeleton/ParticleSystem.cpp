@@ -120,24 +120,24 @@ void ParticleSystem::integrate(float t)
 		else it1++;
 	}
 
-	//for (Particle* elemt : RBparticles)
-	//{
-	//	elemt->integrate(t);
-	//}
+	for (Particle* elemt : RBparticles)
+	{
+		elemt->integrate(t);
+	}
 
-	//auto ot = RBparticles.begin();
-	//while (ot != RBparticles.end()) {
-	//	if ((std::abs((*ot)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ot)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ot)->getPos().p.z) > tamanoCaja.z / 2))
-	//		(*ot)->setErrase();
-	//	if ((*ot)->getErrase())
-	//	{
-	//		registry.registry.erase(*ot);
-	//		delete (*ot);
-	//		ot = RBparticles.erase(ot);
-	//	}
+	auto ot = RBparticles.begin();
+	while (ot != RBparticles.end()) {
+		if ((std::abs((*ot)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ot)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ot)->getPos().p.z) > tamanoCaja.z / 2))
+			(*ot)->setErrase();
+		if ((*ot)->getErrase())
+		{
+			registry.registry.erase(*ot);
+			delete (*ot);
+			ot = RBparticles.erase(ot);
+		}
 
-	//	else ot++;
-	//}
+		else ot++;
+	}
 
 	boton->integrate(t);
 }
@@ -188,7 +188,7 @@ void ParticleSystem::createParticles(double t)
 	}
 
 }
-void ParticleSystem::createRBParticles(double t)
+void ParticleSystem::createRBParticles()
 {
 
 	if (RBparticles.size() < 500) {
@@ -479,7 +479,7 @@ void ParticleSystem::sceneIntegrate()
 		}
 		if (!frActivado)
 		{
-			createRBParticles(actualTime);
+			createRBParticles();
 			frActivationTime = actualTime;
 			frActivado = true;
 		}

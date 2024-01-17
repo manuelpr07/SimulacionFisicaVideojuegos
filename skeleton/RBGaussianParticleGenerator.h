@@ -18,11 +18,14 @@ public:
 
 protected:
 	Vector3 pos;
+	Vector3 vel;
 	Vector3 desvPos;
 	Vector3 linearVel;
 	Vector3 desvVel;
 	Vector3 angularVel;
 	int mass;
+	PxShape* shape;
+	Vector4 color;
 
 	int maxParticles, currentParticles;
 	PxPhysics* physics;
