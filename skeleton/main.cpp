@@ -67,7 +67,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 	
 	//sistema de particulas
-	partSys = new ParticleSystem();
+	partSys = new ParticleSystem(gPhysics, gScene);
 
 	////fuente
 	//part = new Particle(Vector3{0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5, Vector4(0.5, 0, 0.7, 1));
@@ -132,10 +132,6 @@ void initPhysics(bool interactive)
 
 	//addRBParticleGenerator
 	//generador rigido dinamico
-	RBParticle* rbPart = new RBParticle({ 0, 50, 0 }, { 0, -15, 0 }, {0,0,0}, 1, 5, gPhysics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), { 1, 0, 0, 1 });
-	partSys->addRBGausianParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 5, 5, 5 },50, gPhysics, gScene));
-	//rbPart->setErrase();
-	delete rbPart;
 
 	
 
@@ -204,7 +200,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		partSys->generateAnchoredSpringDemo();
 	}; break;
 	case 'Z': {
-		partSys->generateBuoyancyDemo();
+		partSys->createRB();
 	}; break;
 	case 'U': {// Aumentar la constante del muelle
 		partSys->changeSpringPower(+500);

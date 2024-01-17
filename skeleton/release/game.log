@@ -12,15 +12,13 @@ C:\hlocal\manuFisica\skeleton\ForceGenerator.h(41,92): warning C5038: miembro de
 C:\hlocal\manuFisica\skeleton\ForceGenerator.h(60,1): warning C5204: "ExplosionForceGenerator": la clase tiene funciones virtuales, pero su destructor trivial no es virtual; puede que las instancias de objetos derivados de esta clase no se destruyan correctamente
 C:\hlocal\manuFisica\skeleton\ForceGenerator.h(94,3): warning C4265: "BuoyancyForceGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
 C:\hlocal\manuFisica\skeleton\ParticleGenerator.h(18,3): warning C4265: "ParticleGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
-C:\hlocal\manuFisica\skeleton\RBParticle.h(11,3): warning C4265: "RBParticle": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
+C:\hlocal\manuFisica\skeleton\RBParticle.h(12,3): warning C4265: "RBParticle": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
 C:\hlocal\manuFisica\skeleton\boton.h(17,1): warning C4626: 'Boton': el operador de asignaciones se definió implícitamente como eliminado
 C:\hlocal\manuFisica\skeleton\boton.h(17,1): warning C5027: 'Boton': el operador de asignaciones de movimiento se definió implícitamente como eliminado
 C:\hlocal\manuFisica\skeleton\boton.h(17,1): warning C4265: "Boton": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
 C:\hlocal\manuFisica\skeleton\UniformParticleGenerator.h(7,3): warning C4265: "UniformParticleGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
 C:\hlocal\manuFisica\skeleton\gaussianParticleGenerator.h(7,3): warning C4265: "gaussianParticleGenerator": la clase tiene funciones virtuales, pero su destructor no trivial no es virtual; puede que las instancias de esta clase no se destruyan correctamente
-C:\hlocal\manuFisica\skeleton\ParticleSystem.h(84,1): warning C4626: 'ParticleSystem': el operador de asignaciones se definió implícitamente como eliminado
-C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(187,47): warning C4100: 't': parámetro formal sin referencia
-C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(432,9): warning C4456: la declaración de 'a' oculta la declaración local anterior
-C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(420,8): message : vea la declaración de 'a'
-C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(167): warning C4715: 'ParticleSystem::getParticleGenerator': no todas las rutas de acceso de control devuelven un valor
+C:\hlocal\manuFisica\skeleton\ParticleSystem.h(92,1): warning C4626: 'ParticleSystem': el operador de asignaciones se definió implícitamente como eliminado
+C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(191,47): warning C4100: 't': parámetro formal sin referencia
+C:\hlocal\manuFisica\skeleton\ParticleSystem.cpp(170): warning C4715: 'ParticleSystem::getParticleGenerator': no todas las rutas de acceso de control devuelven un valor
   game.vcxproj -> C:\hlocal\manuFisica\bin\game.exe

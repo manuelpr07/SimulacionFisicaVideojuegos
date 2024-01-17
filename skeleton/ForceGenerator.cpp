@@ -88,7 +88,7 @@ void BungeeForceGenerator::updateForce(Particle* p, float t) {
 }
 AnchoredSpringForceGenerator::AnchoredSpringForceGenerator(double k, double resting, const Vector3& anchor_pos) : SpringForceGenerator(k, resting, nullptr)
 {
-	other = new Particle(anchor_pos, Vector3{ 0,0,0 }, 50, 1, 1, 0, CreateShape(PxBoxGeometry(1.0, 1.0, 1.0)), Vector4(0.9, 0.9, 0.9, 0));
+	other = new Particle(anchor_pos, Vector3{ 0,0,0 }, 50, 1, 1, 0, CreateShape(PxBoxGeometry(1.0, 1.0, 1.0)), Vector4(0.5f, 0.5f, 0.6f, 0));
 	other->setSize(1);
 }
 

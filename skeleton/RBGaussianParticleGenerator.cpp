@@ -9,7 +9,7 @@ RBGaussianParticleGenerator::RBGaussianParticleGenerator(RBParticle* mod, Vector
 	currentParticles = 0;
 	physics = phys;
 	gScene = scene;
-	modelParticle = new RBParticle(mod->getPos().p, mod->getVel(), {0,0,0 }, mod->getMass(), mod->getLifeTime(), physics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), mod->getColor());
+	modelParticle = new RBParticle(mod->getPos().p, mod->getVel(), {0,0,0 }, mod->getMass(), mod->getLifeTime(), physics, gScene, mod->getShape(), mod->getColor());
 	currentParticles++;
 }
 
@@ -23,8 +23,6 @@ RBGaussianParticleGenerator::~RBGaussianParticleGenerator()
 
 RBParticle* RBGaussianParticleGenerator::generateParticles(std::list<RBParticle*>& particles)
 {
-		//generar un rigidbody dinamico
-		PxRigidDynamic* new_solid;
 
 		Vector3 newPos;
 		Vector3 newVel;
@@ -51,24 +49,10 @@ RBParticle* RBGaussianParticleGenerator::generateParticles(std::list<RBParticle*
 		std::normal_distribution<double> distributionVZ(modelParticle->getVel().z, desvVel.z);
 		newVel.z = distributionVZ(mt);
 
-		PxShape* shape = CreateShape(PxBoxGeometry(1, 1, 1));
 		auto a = std::chrono::high_resolution_clock::now();
 		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
-		RBParticle* part = new RBParticle(newPos, newVel, { 0, 0, 0 }, modelParticle->getMass(), 5, physics, gScene, shape, modelParticle->getColor());
-		//new_solid = physics->createRigidDynamic(PxTransform(newPos));
-		//new_solid->setLinearVelocity(newVel);
-		//new_solid->setAngularVelocity({ 0, 0, 0 });
-		//PxShape* shape_ad = CreateShape(PxBoxGeometry(1, 1, 1));
-		//new_solid->attachShape(*shape_ad);
-
-		////distribucion de masas
-		//PxRigidBodyExt::updateMassAndInertia(*new_solid, 0.15);
-		//gScene->addActor(*new_solid);
-
-		////renderizado
-		//RenderItem* dynamic_item;
-		//dynamic_item = new RenderItem(shape_ad, new_solid, modeParticle->getColor());
+		RBParticle* part = new RBParticle(newPos, newVel, { 1, 1, 1 }, modelParticle->getMass(), 5, physics, gScene, modelParticle->getShape(), modelParticle->getColor());
 		currentParticles++;
 		particles.push_back(part);
 		return part;

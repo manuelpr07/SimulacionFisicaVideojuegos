@@ -13,7 +13,7 @@
 class ParticleSystem
 {
 public:
-	ParticleSystem();
+	ParticleSystem(PxPhysics* phys, PxScene* Scene);
 	~ParticleSystem();
 	void generate(FireworksRules fr, Vector3 pos);
 	void integrate(float t);
@@ -26,7 +26,6 @@ public:
 	ParticleGenerator* getParticleGenerator(std::string name);
 	void addParticleGenerator(ParticleGenerator* generator);
 	void addRBGausianParticleGenerator(RBGaussianParticleGenerator* generator);
-	void addRBUniformParticleGenerator(RBGaussianParticleGenerator* generator);
 	void addExplosionGenerator(ExplosionForceGenerator* generator);
 	void createParticles(double t);
 	void createRBParticles(double t);
@@ -46,8 +45,14 @@ public:
 	void scene2();
 	void scene3();
 	void scene4();
+	void scene5();
+	void scene6();
+	void scene7();
+	void scene8();
+	void scene9();
+	void scene10();
 protected:
-	const Vector3 tamanoCaja = {200,200,200};
+	const Vector3 tamanoCaja = {250,250,250};
 	std::list<Particle*> particles;
 	std::list<Particle*> shootingParticles;
 	std::list<RBParticle*> RBparticles;
@@ -71,7 +76,8 @@ protected:
 	PxPhysics* gPhysics;
 	PxScene* gScene;
 
-	bool scene1Fr = false;
+	bool scene1Intgr = false;
+	bool scene8Intgr = false;
 	int scene;
 
 	FireworksRules Fr10 = { 0, { 1, 0, 0, 1 }, 10, { 0, 30, 0 }, 1, 3 };
@@ -81,5 +87,7 @@ protected:
 	double frActivationTime;
 	double frBuffer = 0.8;
 	bool frActivado;
+
+	double rbBuffer = 0.05;
 };
 

@@ -1,8 +1,11 @@
 ﻿#include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(PxPhysics* phys, PxScene* Scene)
 {
-	boton = new Boton({ 5,10,0 }, { 0.7, 0, 0, 1 });
+	gPhysics = phys;
+	gScene = Scene;
+
+	boton = new Boton({ 40,40,40 }, { 0.7, 0, 0, 1 });
 
 	//generador rigido uniforme (disparo de la camara)new Particle(pos, v, mass, 0.99, 4, actualTime, shape, _model_particle->getColor());
 	Particle* part = new Particle({ 1000, 50, 1000 }, { 0, -15, 0 }, 5, 0.99, 5, 0, CreateShape(PxBoxGeometry(1, 1, 1)), { 0.4, 0.1, 0.6, 1 });
@@ -117,24 +120,24 @@ void ParticleSystem::integrate(float t)
 		else it1++;
 	}
 
-	for (Particle* elemt : RBparticles)
-	{
-		elemt->integrate(t);
-	}
+	//for (Particle* elemt : RBparticles)
+	//{
+	//	elemt->integrate(t);
+	//}
 
-	auto ot = RBparticles.begin();
-	while (ot != RBparticles.end()) {
-		if ((std::abs((*ot)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ot)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ot)->getPos().p.z) > tamanoCaja.z / 2))
-			(*ot)->setErrase();
-		if ((*ot)->getErrase())
-		{
-			registry.registry.erase(*ot);
-			delete (*ot);
-			ot = RBparticles.erase(ot);
-		}
+	//auto ot = RBparticles.begin();
+	//while (ot != RBparticles.end()) {
+	//	if ((std::abs((*ot)->getPos().p.x) > tamanoCaja.x / 2 || std::abs((*ot)->getPos().p.y) > tamanoCaja.y / 2 || std::abs((*ot)->getPos().p.z) > tamanoCaja.z / 2))
+	//		(*ot)->setErrase();
+	//	if ((*ot)->getErrase())
+	//	{
+	//		registry.registry.erase(*ot);
+	//		delete (*ot);
+	//		ot = RBparticles.erase(ot);
+	//	}
 
-		else ot++;
-	}
+	//	else ot++;
+	//}
 
 	boton->integrate(t);
 }
@@ -183,14 +186,15 @@ void ParticleSystem::createParticles(double t)
 		Particle* p = pg->generateParticles(particles,t);
 		registry.addRegistry(p, forceGenerators);
 	}
+
 }
 void ParticleSystem::createRBParticles(double t)
 {
 
-	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
-		RBParticle* p = pg->generateParticles(RBparticles);
-		if (p != nullptr)
-		{
+	if (RBparticles.size() < 500) {
+		for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
+
+			RBParticle* p = pg->generateParticles(RBparticles);
 			registry.addRegistry(p, forceGenerators);
 		}
 	}
@@ -285,13 +289,7 @@ void ParticleSystem::anchoredSForce(float f)
 
 void ParticleSystem::createRB()
 {
-	for (RBGaussianParticleGenerator* pg : RBparticleGenerators) {
-		while (RBparticles.size() < 100) {
 
-			RBParticle* p = pg->generateParticles(RBparticles);
-			registry.addRegistry(p, forceGenerators);
-		}
-	}
 }
 
 void ParticleSystem::clearScene()
@@ -338,7 +336,27 @@ void ParticleSystem::clearScene()
 		}
 	}
 
+	if (!forceGenerators.empty()) {
+		auto it5 = forceGenerators.begin();
+		while (it5 != forceGenerators.end()) {
+			if ((*it5) != gravity)
+				it5 = forceGenerators.erase(it5);
+			else it5++;
+		}
+	}
 	
+	if (!RBparticles.empty()) {
+		auto it6 = RBparticles.begin();
+		while (it6 != RBparticles.end()) {
+			it6 = RBparticles.erase(it6);
+		}
+	}
+	if (!RBparticleGenerators.empty()) {
+		auto it7 = RBparticleGenerators.begin();
+		while (it7 != RBparticleGenerators.end()) {
+			it7 = RBparticleGenerators.erase(it7);
+		}
+	}
 	if (gen1 != nullptr)
 	{
 		gen1 = nullptr;
@@ -399,7 +417,7 @@ void ParticleSystem::changeScene()
 				scene1();
 			}; break;
 			case 2: {
-				scene1Fr = false;
+				scene1Intgr = false;
 				scene2();
 			}; break;
 			case 3: {
@@ -408,6 +426,24 @@ void ParticleSystem::changeScene()
 			case 4: {
 				scene4();
 			}; break;
+			case 5: {
+				scene5();
+			}; break;
+			case 6: {
+				scene6();
+			}; break;
+			case 7: {
+				scene7();
+			}; break;
+			case 8: {
+				scene8();
+			}; break;
+			case 9: {
+				scene9();
+			}; break;
+			case 10: {
+				scene10();
+			}; break;
 		}
 
 	}
@@ -415,7 +451,7 @@ void ParticleSystem::changeScene()
 
 void ParticleSystem::sceneIntegrate()
 {
-	if (scene1Fr)
+	if (scene1Intgr)
 	{
 		auto a = std::chrono::high_resolution_clock::now();
 		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
@@ -429,7 +465,21 @@ void ParticleSystem::sceneIntegrate()
 			generate(Fr10, Vector3{ -90,0,90 });
 			generate(Fr10, Vector3{ 90,0,-90 });
 			generate(Fr10, Vector3{ -90,0,-90 });
-			auto a = std::chrono::high_resolution_clock::now();
+			frActivationTime = actualTime;
+			frActivado = true;
+		}
+	}
+	if (scene8Intgr)
+	{
+		auto a = std::chrono::high_resolution_clock::now();
+		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+
+		if (actualTime > frActivationTime + rbBuffer) {
+			frActivado = false;
+		}
+		if (!frActivado)
+		{
+			createRBParticles(actualTime);
 			frActivationTime = actualTime;
 			frActivado = true;
 		}
@@ -438,7 +488,7 @@ void ParticleSystem::sceneIntegrate()
 
 void ParticleSystem::scene1()
 {
-	scene1Fr = true;
+	scene1Intgr = true;
 
 	Particle* part = new Particle(Vector3{70,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 4, Vector4(0, 0.2, 0.8, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part, "fuente1"));
@@ -466,27 +516,27 @@ void ParticleSystem::scene2()
 {
 	clearScene();
 
-	Particle* part = new Particle(Vector3{ 80,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	Particle* part = new Particle(Vector3{ 80,-5,0 }, Vector3{ 0,30,0 }, 30, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part, "fuente1"));
 	particles.push_back(part);
 	part->setErrase();
 
-	Particle* part1 = new Particle(Vector3{ -80,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	Particle* part1 = new Particle(Vector3{ -80,-5,0 }, Vector3{ 0,30,0 }, 30, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part1, "fuente2"));
 	particles.push_back(part1);
 	part1->setErrase();
 
-	Particle* part2 = new Particle(Vector3{ 0,-5,80 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	Particle* part2 = new Particle(Vector3{ 0,-5,80 }, Vector3{ 0,30,0 }, 30, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part2, "fuente3"));
 	particles.push_back(part2);
 	part2->setErrase();
 
-	Particle* part3 = new Particle(Vector3{ 0,-5,-80 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	Particle* part3 = new Particle(Vector3{ 0,-5,-80 }, Vector3{ 0,30,0 }, 30, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part3, "fuente4"));
 	particles.push_back(part3);
 	part3->setErrase();
 
-	Particle* part4 = new Particle(Vector3{ 0,-5,-0 }, Vector3{ 0,40,0 }, 80, 0.8, 6, Vector4(0.8, 0.2, 0., 1));
+	Particle* part4 = new Particle(Vector3{ 0,-5,-0 }, Vector3{ 0,40,0 }, 80, 0.8, 6, Vector4(0.8, 0.2, 0, 1));
 	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part4, "fuente5"));
 	particles.push_back(part4);
 	part4->setErrase();
@@ -504,4 +554,212 @@ void ParticleSystem::scene4()
 		wind = nullptr;
 	}
 	addWindForceGenerator(new WindForceGenerator(Vector3{ -20, 10, 0 }, 30));
+}
+
+void ParticleSystem::scene5()
+{
+	if (wind != nullptr)
+	{
+		wind = nullptr;
+	}
+	addWhirlwindForceGenerator(new WhirlwindForceGenerator(85, Vector3{ 0, 0, 0 }, 3, 6));
+}
+
+void ParticleSystem::scene6()
+{
+	clearScene();
+	//1
+	auto a = std::chrono::high_resolution_clock::now();
+	float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+	Particle* p1 = new Particle(Vector3{ 90,10,30 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	Particle* p2 = new Particle(Vector3{ -90,10,30 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	BungeeForceGenerator* bf11 = new BungeeForceGenerator(5, 10, p2);
+	registry.addRegistry(p1, bf11);
+	BungeeForceGenerator* bf12 = new BungeeForceGenerator(5, 10, p1);
+	registry.addRegistry(p2, bf12);
+	forceGenerators.push_back(bf11);
+	forceGenerators.push_back(bf12);
+	particles.push_back(p1);
+	particles.push_back(p2);
+
+	//2
+	Particle* p3 = new Particle(Vector3{ 90,10,-30 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	Particle* p4 = new Particle(Vector3{ -90,10,-30 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	BungeeForceGenerator* bf21 = new BungeeForceGenerator(5, 10, p4);
+	registry.addRegistry(p3, bf21);
+	BungeeForceGenerator* bf22 = new BungeeForceGenerator(5, 10, p3);
+	registry.addRegistry(p4, bf22);
+	forceGenerators.push_back(bf21);
+	forceGenerators.push_back(bf22);
+	particles.push_back(p3);
+	particles.push_back(p4);
+
+	//3
+	Particle* p5 = new Particle(Vector3{ 90,10, 90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	Particle* p6 = new Particle(Vector3{ -90,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	BungeeForceGenerator* bf31 = new BungeeForceGenerator(1, 10, p6);
+	registry.addRegistry(p5, bf31);
+	BungeeForceGenerator* bf32 = new BungeeForceGenerator(1, 10, p5);
+	registry.addRegistry(p6, bf32);
+	forceGenerators.push_back(bf31);
+	forceGenerators.push_back(bf32);
+	particles.push_back(p5);
+	particles.push_back(p6);
+
+	//4																
+	Particle* p7 = new Particle(Vector3{ 90,10, -90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	Particle* p8 = new Particle(Vector3{ -90,10,-90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	BungeeForceGenerator* bf41 = new BungeeForceGenerator(1, 10, p8);
+	registry.addRegistry(p7, bf41);
+	BungeeForceGenerator* bf42 = new BungeeForceGenerator(1, 10, p7);
+	registry.addRegistry(p8, bf42);
+	forceGenerators.push_back(bf41);
+	forceGenerators.push_back(bf42);
+	particles.push_back(p7);
+	particles.push_back(p8);
+
+	//5
+	Particle* p9 = new Particle(Vector3{ 90,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	Particle* p10 = new Particle(Vector3{ 90,10,-90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	BungeeForceGenerator* bf51 = new BungeeForceGenerator(1, 10, p10);
+	registry.addRegistry(p9, bf51);
+	BungeeForceGenerator* bf52 = new BungeeForceGenerator(1, 10, p9); 
+	registry.addRegistry(p10, bf52);
+	forceGenerators.push_back(bf51);
+	forceGenerators.push_back(bf52);
+	particles.push_back(p9);
+	particles.push_back(p10);
+
+	//6
+	Particle* p11 = new Particle(Vector3{ 30,10,-90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	Particle* p12 = new Particle(Vector3{ 30,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	BungeeForceGenerator* bf61 = new BungeeForceGenerator(5, 10, p12);
+	registry.addRegistry(p11, bf61);
+	BungeeForceGenerator* bf62 = new BungeeForceGenerator(5, 10, p11);
+	registry.addRegistry(p12, bf62);
+	forceGenerators.push_back(bf61);
+	forceGenerators.push_back(bf62);
+	particles.push_back(p11);
+	particles.push_back(p12);
+
+	//7
+	Particle* p13 = new Particle(Vector3{ -30,10, -90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	Particle* p14 = new Particle(Vector3{ -30,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	BungeeForceGenerator* bf71 = new BungeeForceGenerator(5, 10, p14);
+	registry.addRegistry(p13, bf71);
+	BungeeForceGenerator* bf72 = new BungeeForceGenerator(5, 10, p13);
+	registry.addRegistry(p14, bf72);
+	forceGenerators.push_back(bf71);
+	forceGenerators.push_back(bf72);
+	particles.push_back(p13);
+	particles.push_back(p14);
+
+	//8																
+	Particle* p15 = new Particle(Vector3{ -90,10, -90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	Particle* p16 = new Particle(Vector3{ -90,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	BungeeForceGenerator* bf81 = new BungeeForceGenerator(1, 10, p16);
+	registry.addRegistry(p15, bf81);
+	BungeeForceGenerator* bf82 = new BungeeForceGenerator(1, 10, p15);
+	registry.addRegistry(p16, bf82);
+	forceGenerators.push_back(bf81);
+	forceGenerators.push_back(bf82);
+	particles.push_back(p15);
+	particles.push_back(p16);
+
+}
+
+void ParticleSystem::scene7()
+{
+
+	auto a = std::chrono::high_resolution_clock::now();
+	float startTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
+
+	//1
+	Particle* p1 = new Particle(Vector3{ 60,100,60 }, Vector3{ 0,0,0 }, 40, 1, 500, startTime, CreateShape(PxSphereGeometry(8.0)), Vector4(0, 0.6, 0.6, 1));
+	AnchoredSpringForceGenerator* f1 = new AnchoredSpringForceGenerator(10, 10, { 60,100,60 });
+	registry.addRegistry(p1, f1);
+	registry.addRegistry(p1, gravity);
+	forceGenerators.push_back(f1);
+	particles.push_back(p1);
+
+	//1
+	Particle* p2 = new Particle(Vector3{ -60,100,60 }, Vector3{ 0,0,0 }, 40, 1, 500, startTime, CreateShape(PxSphereGeometry(8.0)), Vector4(0.6, 1, 0, 1));
+	AnchoredSpringForceGenerator* f2 = new AnchoredSpringForceGenerator(10, 10, { -60,100,60 });
+	registry.addRegistry(p2, f2);
+	registry.addRegistry(p2, gravity);
+	forceGenerators.push_back(f2);
+	particles.push_back(p2);
+
+	//1
+	Particle* p3 = new Particle(Vector3{ 60,100,-60 }, Vector3{ 0,0,0 }, 40, 1, 500, startTime, CreateShape(PxSphereGeometry(8.0)), Vector4(0, 0.6, 0.6, 1));
+	AnchoredSpringForceGenerator* f3 = new AnchoredSpringForceGenerator(10, 10, { 60,100,-60 });
+	registry.addRegistry(p3, f3);
+	registry.addRegistry(p3, gravity);
+	forceGenerators.push_back(f3);
+	particles.push_back(p3);
+
+	//1
+	Particle* p4 = new Particle(Vector3{ -60,100,-60 }, Vector3{ 0,0,0 }, 40, 1, 500, startTime, CreateShape(PxSphereGeometry(8.0)), Vector4(0.6, 1, 0, 1));
+	AnchoredSpringForceGenerator* f4 = new AnchoredSpringForceGenerator(10, 10, { -60,100,-60 });
+	registry.addRegistry(p4, f4);
+	registry.addRegistry(p4, gravity);
+	forceGenerators.push_back(f4);
+	particles.push_back(p4);
+
+
+
+	//3
+	Particle* p5 = new Particle(Vector3{ 90,10, 90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	Particle* p6 = new Particle(Vector3{ -90,10,-90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	BungeeForceGenerator* bf31 = new BungeeForceGenerator(1, 10, p6);
+	registry.addRegistry(p5, bf31);
+	BungeeForceGenerator* bf32 = new BungeeForceGenerator(1, 10, p5);
+	registry.addRegistry(p6, bf32);
+	forceGenerators.push_back(bf31);
+	forceGenerators.push_back(bf32);
+	particles.push_back(p5);
+	particles.push_back(p6);
+
+	//4																
+	Particle* p7 = new Particle(Vector3{ 90,10, -90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0.5, 0, 0.7, 1));
+	Particle* p8 = new Particle(Vector3{ -90,10,90 }, Vector3{ 0,0,0 }, 2, 1, 500, startTime, CreateShape(PxSphereGeometry(4.0)), Vector4(0, 0.7, 0, 1));
+	BungeeForceGenerator* bf41 = new BungeeForceGenerator(1, 10, p8);
+	registry.addRegistry(p7, bf41);
+	BungeeForceGenerator* bf42 = new BungeeForceGenerator(1, 10, p7);
+	registry.addRegistry(p8, bf42);
+	forceGenerators.push_back(bf41);
+	forceGenerators.push_back(bf42);
+	particles.push_back(p7);
+	particles.push_back(p8);
+}
+
+void ParticleSystem::scene8()
+{
+	clearScene();
+	scene8Intgr = true;
+
+	RBParticle* rbPart = new RBParticle({ 60, 10, 0 }, { 0, 15, 0 }, { 0,0,0 }, 10, 5, gPhysics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), { 0.6, 0.2, 0, 1 });
+	addRBGausianParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 5, 5, 5 }, Vector3{ 1, 1, 1 }, 50, gPhysics, gScene));
+	//rbPart->setErrase();
+	delete rbPart;
+
+	RBParticle* rbPart2 = new RBParticle({ -60, 10, 0 }, { 0, 15, 0 }, { 0,0,0 }, 10, 5, gPhysics, gScene, CreateShape(PxBoxGeometry(1, 1, 1)), { 0.6, 0.2, 0, 1 });
+	addRBGausianParticleGenerator(new RBGaussianParticleGenerator(rbPart2, Vector3{ 5, 5, 5 }, Vector3{ 1, 1, 1 }, 50, gPhysics, gScene));
+	//rbPart->setErrase();
+	delete rbPart2;
+
+}
+void ParticleSystem::scene9()
+{
+
+	RBParticle* rbPart = new RBParticle({ 0, 0, 0 }, { 0, 40, 0 }, { 0,0,0 }, 50, 5, gPhysics, gScene, CreateShape(PxCapsuleGeometry(1, 2)), { 0.2, 0.6, 0, 1 });
+	addRBGausianParticleGenerator(new RBGaussianParticleGenerator(rbPart, Vector3{ 10, 10, 10 }, Vector3{ 1, 1, 1 }, 50, gPhysics, gScene));
+	//rbPart->setErrase();
+	delete rbPart;
+
+}
+void ParticleSystem::scene10()
+{
+	addWhirlwindForceGenerator(new WhirlwindForceGenerator(85, Vector3{ 0, 0, 0 }, 10, 20));
+
 }

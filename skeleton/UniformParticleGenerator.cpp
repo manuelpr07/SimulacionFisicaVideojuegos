@@ -20,7 +20,7 @@ Particle* UniformParticleGenerator::generateParticles(std::list<Particle*>& part
 Particle* UniformParticleGenerator::generate(std::list<Particle*>& particles, Vector3 pos, Vector3 v, int mass)
 {
 
-	PxShape* shape = CreateShape(PxBoxGeometry(0.1, 0.1, 0.1));
+	PxShape* shape = CreateShape(PxBoxGeometry(0.25, 0.25, 0.25));
 	auto a = std::chrono::high_resolution_clock::now();
 	double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
