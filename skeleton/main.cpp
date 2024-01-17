@@ -1,3 +1,4 @@
+#pragma once
 #include <ctype.h>
 
 #include <PxPhysicsAPI.h>
@@ -41,7 +42,6 @@ ParticleSystem* partSys;
 RBGaussianParticleGenerator* GeneradorRigido;
 float springPower = 20.0f;
 
-FireworksRules fr;
 // Initialize physics engine
 void initPhysics(bool interactive)
 {
@@ -67,7 +67,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 	
 	//sistema de particulas
-	partSys = new ParticleSystem(gPhysics, gScene);
+	partSys = new ParticleSystem();
 
 	////fuente
 	//part = new Particle(Vector3{0,0,0 }, Vector3{ 0,30,0 }, 12, 1, 5, Vector4(0.5, 0, 0.7, 1));
@@ -118,14 +118,6 @@ void initPhysics(bool interactive)
 	//particleSystem->addForceGenerator(springGen);
 	//spring = springGen;
 
-	//firework
-	fr.colour = { 1, 0, 0, 1 };
-	fr.numParticles = 10;
-	fr.vel = { 0,40,0 };
-	fr.damping = 1;
-	fr.lifeTime = 4;
-	fr.level = 0;
-	//Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
 
 	//generar el suelo estatico
 	PxRigidStatic* suelo = gPhysics->createRigidStatic(PxTransform({ 0,0,0 }));
@@ -227,7 +219,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		partSys->clearScene();
 	}; break;
 	case 'G': {// Disminuir la constante del muelle
-		partSys->createRB();
+		partSys->changeScene();
 	}; break;
 	case ' ':
 	{

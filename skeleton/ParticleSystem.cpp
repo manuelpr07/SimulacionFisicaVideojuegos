@@ -1,12 +1,8 @@
 ﻿#include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem(PxPhysics* phys, PxScene* scene)
+ParticleSystem::ParticleSystem()
 {
-	gPhysics = phys;
-	gScene = scene;
-
-
-	boton = new Boton({ 0,10,0 }, { 0.7, 0, 0, 1 });
+	boton = new Boton({ 5,10,0 }, { 0.7, 0, 0, 1 });
 
 	//generador rigido uniforme (disparo de la camara)new Particle(pos, v, mass, 0.99, 4, actualTime, shape, _model_particle->getColor());
 	Particle* part = new Particle({ 1000, 50, 1000 }, { 0, -15, 0 }, 5, 0.99, 5, 0, CreateShape(PxBoxGeometry(1, 1, 1)), { 0.4, 0.1, 0.6, 1 });
@@ -18,14 +14,42 @@ ParticleSystem::ParticleSystem(PxPhysics* phys, PxScene* scene)
 
 ParticleSystem::~ParticleSystem()
 {
-	clearScene();
+	auto it = particles.begin();
+	while (it != particles.end()) {
+		registry.registry.erase(*it);
+		delete (*it);
+		it = particles.erase(it);
+	}
+
+	auto ut = shootingParticles.begin();
+	while (ut != shootingParticles.end()) {
+		registry.registry.erase(*ut);
+		delete (*ut);
+		ut = shootingParticles.erase(ut);
+	}
+
+
+	auto it1 = Fireworks.begin();
+	while (it1 != Fireworks.end()) {
+		registry.registry.erase(*it1);
+		delete (*it1);
+		it1 = Fireworks.erase(it1);
+	}
+
+
+	auto ot = RBparticles.begin();
+	while (ot != RBparticles.end()) {
+		registry.registry.erase(*ot);
+		delete (*ot);
+		ot = RBparticles.erase(ot);
+	}
 
 }
 
-void ParticleSystem::generate(FireworksRules fr)
+void ParticleSystem::generate(FireworksRules fr, Vector3 pos)
 {
 
-	Fireworks.push_back(new Firework(Vector3{ 0,0,0 }, fr, Fireworks));
+	Fireworks.push_back(new Firework(pos, fr, Fireworks));
 
 }
 
@@ -33,7 +57,7 @@ void ParticleSystem::integrate(float t)
 {
 	createParticles(t);
 
-
+	sceneIntegrate();
 
 	registry.updateForces(t);
 
@@ -59,7 +83,8 @@ void ParticleSystem::integrate(float t)
 	for (Particle* elem : shootingParticles)
 	{
 		elem->integrate(t);
-		boton->DetectarColision(elem);
+		if(boton->DetectarColision(elem))
+			changeScene();
 	}
 
 	auto ut = shootingParticles.begin();
@@ -305,6 +330,15 @@ void ParticleSystem::clearScene()
 			it3++;
 		}
 	}
+
+	if (!particleGenerators.empty()) {
+		auto it4 = particleGenerators.begin();
+		while (it4 != particleGenerators.end()) {
+			it4 = particleGenerators.erase(it4);
+		}
+	}
+
+	
 	if (gen1 != nullptr)
 	{
 		gen1 = nullptr;
@@ -332,6 +366,7 @@ void ParticleSystem::clearScene()
 		buoyancy = nullptr;
 	}
 
+
 }
 
 
@@ -356,21 +391,117 @@ void ParticleSystem::changeScene()
 {
 	if (scene < 100)
 	{
-		clearScene();
 		scene++;
 
 		switch (scene)
 		{
-			case '1': {
-
+			case 1: {
+				scene1();
 			}; break;
-			case '2': {
-
+			case 2: {
+				scene1Fr = false;
+				scene2();
+			}; break;
+			case 3: {
+				scene3();
+			}; break;
+			case 4: {
+				scene4();
 			}; break;
 		}
 
 	}
 }
 
+void ParticleSystem::sceneIntegrate()
+{
+	if (scene1Fr)
+	{
+		auto a = std::chrono::high_resolution_clock::now();
+		double actualTime = std::chrono::duration_cast<std::chrono::duration<double>>(a.time_since_epoch()).count();
 
+		if (actualTime > frActivationTime + frBuffer) {
+			frActivado = false;
+		}
+		if (!frActivado)
+		{
+			generate(Fr10, Vector3{ 90,0,90 });
+			generate(Fr10, Vector3{ -90,0,90 });
+			generate(Fr10, Vector3{ 90,0,-90 });
+			generate(Fr10, Vector3{ -90,0,-90 });
+			auto a = std::chrono::high_resolution_clock::now();
+			frActivationTime = actualTime;
+			frActivado = true;
+		}
+	}
+}
 
+void ParticleSystem::scene1()
+{
+	scene1Fr = true;
+
+	Particle* part = new Particle(Vector3{70,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 4, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part, "fuente1"));
+	particles.push_back(part);
+	part->setErrase();
+
+	Particle* part1 = new Particle(Vector3{-70,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 4, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part1, "fuente2"));
+	particles.push_back(part1);
+	part1->setErrase();
+
+	Particle* part2 = new Particle(Vector3{ 0,-5,70 }, Vector3{ 0,30,0 }, 12, 0.9, 4, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part2, "fuente3"));
+	particles.push_back(part2);
+	part2->setErrase();
+
+	Particle* part3 = new Particle(Vector3{ 0,-5,-70 }, Vector3{ 0,30,0 }, 12, 0.9, 4, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part3, "fuente4"));
+	particles.push_back(part3);
+	part3->setErrase();
+
+}
+
+void ParticleSystem::scene2()
+{
+	clearScene();
+
+	Particle* part = new Particle(Vector3{ 80,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part, "fuente1"));
+	particles.push_back(part);
+	part->setErrase();
+
+	Particle* part1 = new Particle(Vector3{ -80,-5,0 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part1, "fuente2"));
+	particles.push_back(part1);
+	part1->setErrase();
+
+	Particle* part2 = new Particle(Vector3{ 0,-5,80 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part2, "fuente3"));
+	particles.push_back(part2);
+	part2->setErrase();
+
+	Particle* part3 = new Particle(Vector3{ 0,-5,-80 }, Vector3{ 0,30,0 }, 12, 0.9, 6, Vector4(0, 0.2, 0.8, 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part3, "fuente4"));
+	particles.push_back(part3);
+	part3->setErrase();
+
+	Particle* part4 = new Particle(Vector3{ 0,-5,-0 }, Vector3{ 0,40,0 }, 80, 0.8, 6, Vector4(0.8, 0.2, 0., 1));
+	addParticleGenerator(new gaussianParticleGenerator(Vector3{ 0, 0, 0 }, Vector3{ 5, 3, 5 }, part4, "fuente5"));
+	particles.push_back(part4);
+	part4->setErrase();
+}
+
+void ParticleSystem::scene3()
+{
+	addWindForceGenerator(new WindForceGenerator(Vector3{ -10, 3, 0 }, 10));
+}
+
+void ParticleSystem::scene4()
+{
+	if (wind != nullptr)
+	{
+		wind = nullptr;
+	}
+	addWindForceGenerator(new WindForceGenerator(Vector3{ -20, 10, 0 }, 30));
+}

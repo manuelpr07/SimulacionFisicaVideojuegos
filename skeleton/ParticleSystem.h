@@ -8,13 +8,14 @@
 #include "ForceRegistry.h"
 #include "boton.h"
 #include "UniformParticleGenerator.h"
+#include "gaussianParticleGenerator.h"
 
 class ParticleSystem
 {
 public:
-	ParticleSystem(PxPhysics* phys, PxScene* scene);
+	ParticleSystem();
 	~ParticleSystem();
-	void generate(FireworksRules fr);
+	void generate(FireworksRules fr, Vector3 pos);
 	void integrate(float t);
 
 	void addForceGenerator(ForceGenerator* forceGenerator);
@@ -40,7 +41,11 @@ public:
 	void clearScene();
 	void shootProjectile(const PxTransform& camera);
 	void changeScene();
+	void sceneIntegrate();
 	void scene1();
+	void scene2();
+	void scene3();
+	void scene4();
 protected:
 	const Vector3 tamanoCaja = {200,200,200};
 	std::list<Particle*> particles;
@@ -66,6 +71,15 @@ protected:
 	PxPhysics* gPhysics;
 	PxScene* gScene;
 
+	bool scene1Fr = false;
 	int scene;
+
+	FireworksRules Fr10 = { 0, { 1, 0, 0, 1 }, 10, { 0, 30, 0 }, 1, 3 };
+	FireworksRules Fr11 = { 1, { 1, 0.5, 0, 1 }, 10, { 0, 10, 0 }, 1, 2 };
+	FireworksRules Fr12 = { 2, { 1, 1, 0, 1 }, 5, { 0, 5, 0 }, 1, 1.5 };
+
+	double frActivationTime;
+	double frBuffer = 0.8;
+	bool frActivado;
 };
 
